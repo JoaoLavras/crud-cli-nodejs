@@ -1,0 +1,27 @@
+{
+  "name": "crud-cli-nodejs",
+  "version": "1.0.0",
+  "description": "Crud produzido com 100% node.js puro",
+  "main": "./src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node .",
+    "watch": "node --watch index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JoaoLavras/crud-cli-nodejs.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/JoaoLavras/crud-cli-nodejs/issues"
+  },
+  "homepage": "https://github.com/JoaoLavras/crud-cli-nodejs#readme",
+  "dependencies": {
+    "@inquirer/prompts": "^8.2.0",
+    "chalk": "^5.6.2"
+  }
+}
