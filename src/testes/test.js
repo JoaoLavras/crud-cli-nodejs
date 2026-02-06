@@ -24,4 +24,8 @@ users.push(person2); // tudo isso esta indo para dentro de users
 
 console.log(users);
 
+console.log(users[1].nome);
+console.log("users.cpf ->", users.cpf);
+
 writeFileSync(filePATH, JSON.stringify(users, null, 2), "utf-8");
+

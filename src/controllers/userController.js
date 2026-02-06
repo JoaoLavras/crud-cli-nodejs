@@ -1,12 +1,10 @@
 import { input } from '@inquirer/prompts';
 import chalk from 'chalk';
-import { validarCadastro, listarUsersService } from "../services/userService.js";
+import { validarCadastro, listarUsersService, buscarUserService } from "../services/userService.js";
 
 //user { id: string, nome: string, idade }
 
-async function cadastrarUsers(){
-    console.log(chalk.bold.white.bgGreen("CadastrarUsers()"));
-    
+async function cadastrarUserController(){ 
     console.log(chalk.whiteBright("Preencha os campos abaixo ..."));
     const cpf = await input({message: chalk.greenBright("CPF: ")});
     const nome = await input({message: chalk.greenBright("Nome: ")});
@@ -15,26 +13,24 @@ async function cadastrarUsers(){
     validarCadastro(cpf, nome, idade);
 }
 
-function listarUsers(){
-    console.log("userController chamando listarUsers()");
-    console.log("Listando users...");
-
+function listarUsersController(){
     listarUsersService();
 }
 
-function buscarUsers(){
-    console.log("userController chamando buscarUsers()");
-    console.log("Buscando users...");
+async function buscarUserController(){
+    const cpfKey = await input({message: "Digite o CPF que deseja buscar: "});
+
+    buscarUserService(cpfKey);
 }
 
-function atualizarUser(){
+function atualizarUserController(){
     console.log("userController chamando atualizarUsers()");
     console.log("Atualizar users...");
 }
 
-function deletarUser(){
+function deletarUserController(){
     console.log("userController chamando deletarUsers()");
     console.log("Deletando users...");
 }
 
-export { cadastrarUsers, listarUsers, buscarUsers, atualizarUser, deletarUser }
+export { cadastrarUserController, listarUsersController, buscarUserController, atualizarUserController, deletarUserController }

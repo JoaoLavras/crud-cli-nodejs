@@ -1,6 +1,6 @@
 import { input } from '@inquirer/prompts';
 import chalk from 'chalk';
-import { cadastrarUsers, listarUsers, buscarUsers, atualizarUser, deletarUser } from '../controllers/userController.js';
+import { cadastrarUserController, listarUsersController, buscarUserController, atualizarUserController, deletarUserController } from '../controllers/userController.js';
 
 async function menu(){
     console.log(chalk.bold.cyan("CLI - GERENCIAMENTO DE USERS"));
@@ -16,23 +16,23 @@ async function menu(){
     switch(option){
         case 1:
             console.clear();
-            cadastrarUsers();
+            cadastrarUserController();
             break;
         case 2:
             console.clear();
-            listarUsers();
+            listarUsersController();
             break;
         case 3:
             console.clear();
-            buscarUsers();
+            buscarUserController();
             break;
         case 4:
             console.clear();
-            atualizarUser();
+            atualizarUserController();
             break;
         case 5:
             console.clear();
-            deletarUser();
+            deletarUserController();
             break;
         default:
             console.clear();
