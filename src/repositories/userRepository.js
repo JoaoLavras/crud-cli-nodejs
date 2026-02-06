@@ -43,7 +43,7 @@ class User{
 }
 
 
-function armazenarUser(cpf, nome, idade){
+function armazenarUserRepository(cpf, nome, idade){
     const newUser = new User(cpf, nome, idade);
 
     const usersJSON = readFileSync(filePATH, "utf-8");
@@ -64,15 +64,8 @@ function armazenarUser(cpf, nome, idade){
 function listarUsersRepository(){
     const listJSON = readFileSync(filePATH, "utf-8");
     const users = JSON.parse(listJSON); //esta recebendo um array
-    let i = 0;
 
-    for(i = 0; i <= users.length; i++){
-        console.log("to passando aqui...");
-        console.log(users[i].name);
-    }
-    console.log(users);
-
-    return listJSON;
+    return users;
 }
 
-export { armazenarUser, listarUsersRepository }
+export { armazenarUserRepository, listarUsersRepository }

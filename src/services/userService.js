@@ -1,11 +1,9 @@
 import { input } from '@inquirer/prompts';
 import chalk from 'chalk';
-import { armazenarUser, listarUsersRepository } from '../repositories/userRepository.js';
+import { armazenarUserRepository, listarUsersRepository } from '../repositories/userRepository.js';
 
 function validarCadastro(cpf, nome, idade){
     console.clear();
-    console.log(`O CPF: ${cpf} chegou para validação em userService`);
-    //tirar depois
     
     //validar tamanho
     if(cpf.length !== 11){
@@ -17,14 +15,42 @@ function validarCadastro(cpf, nome, idade){
     //validar existencia no sistema
 
     //armazenar
-    armazenarUser(cpf, nome, idade);
-
-    
+    armazenarUserRepository(cpf, nome, idade);
 }
 
 function listarUsersService(){
-    return console.log(listarUsersRepository());
+    console.clear();
+
+    const userList = listarUsersRepository();
+
+    console.log(chalk.bold.redBright("LISTA DE USUARIOS"))
+    for(let i = 0; i < userList.length; i++){
+        console.log(chalk.red("---------------"));
+        console.log(chalk.yellow("NOME: ", userList[i].nome));
+        console.log(chalk.yellow("CPF: ", userList[i].cpf));
+        console.log(chalk.yellow("IDADE: ", userList[i].idade));
+    }
+
+    return true;
 }
 
-export { validarCadastro, listarUsersService }
+function buscarUserService(cpfKey){;
+    const listUsers = listarUsersRepository(); //listUsers ja esta como array JS
+    const userSearch = listUsers.find(listUsers => listUsers.cpf === cpfKey);
+
+    if(userSearch){
+        console.log(chalk.bold.green("User Encontrado!"));
+        console.log(chalk.yellow("NOME: ", userSearch.nome));
+        console.log(chalk.yellow("CPF: ", userSearch.cpf));
+        console.log(chalk.yellow("IDADE: ", userSearch.idade));
+    }
+    else{
+        console.log("usuario nao encontrado!");
+        return false;
+    }
+
+    return true;
+}
+
+export { validarCadastro, listarUsersService, buscarUserService }
 
