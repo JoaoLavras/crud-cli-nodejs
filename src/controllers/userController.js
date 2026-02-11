@@ -1,6 +1,6 @@
 import { input } from '@inquirer/prompts';
 import chalk from 'chalk';
-import { validarCadastro, listarUsersService, buscarUserService } from "../services/userService.js";
+import { validarCadastro, listarUsersService, buscarUserService, atualizarUserService, limparService } from "../services/userService.js";
 
 //user { id: string, nome: string, idade }
 
@@ -20,12 +20,33 @@ function listarUsersController(){
 async function buscarUserController(){
     const cpfKey = await input({message: "Digite o CPF que deseja buscar: "});
 
-    buscarUserService(cpfKey);
+    const userSearch = buscarUserService(cpfKey);
+
+    if(userSearch){
+        console.log(chalk.bold.green("User Encontrado!"));
+        console.log(chalk.yellow("NOME: ", userSearch.nome));
+        console.log(chalk.yellow("CPF: ", userSearch.cpf));
+        console.log(chalk.yellow("IDADE: ", userSearch.idade));
+
+        return true;
+    }
+
+    console.log(chalk.red("Erro Usuário nao encontrado!"));
+
+    return false;
 }
 
-function atualizarUserController(){
-    console.log("userController chamando atualizarUsers()");
-    console.log("Atualizar users...");
+async function atualizarUserController(){
+    const cpfKey = await input({message: "Digite o CPF do usuario que deseja atualizar: "});
+    const resultado = await atualizarUserService(cpfKey); //por a função ser async é necessario esssa sintaxe
+
+    if(!resultado){ 
+        atualizarUserController();
+    }
+    else{
+        console.log("Usuario atualizado com sucesso!");
+    }
+
 }
 
 function deletarUserController(){
@@ -33,4 +54,8 @@ function deletarUserController(){
     console.log("Deletando users...");
 }
 
-export { cadastrarUserController, listarUsersController, buscarUserController, atualizarUserController, deletarUserController }
+function limparController(){
+    limparService();
+}
+
+export { cadastrarUserController, listarUsersController, buscarUserController, atualizarUserController, deletarUserController, limparController }

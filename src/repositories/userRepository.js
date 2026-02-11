@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { writeFileSync, readFileSync } from "node:fs";
+import { writeFileSync, readFileSync, write } from "node:fs";
 
 const filePATH = "./src/database/users.json"
 
@@ -40,17 +40,27 @@ class User{
         this.#idade = newIdade;
     }
 
+        toJSON() {
+        return {
+            cpf: this.#cpf,
+            nome: this.#nome,
+            idade: this.#idade
+        };
+    }
+
 }
 
 
 function armazenarUserRepository(cpf, nome, idade){
     const newUser = new User(cpf, nome, idade);
-
     const usersJSON = readFileSync(filePATH, "utf-8");
-
     const users = JSON.parse(usersJSON);
 
-    users.push(newUser);
+    users.push({
+        cpf: newUser.getCpf(),
+        nome: newUser.getNome(),
+        idade: newUser.getIdade()
+    });
 
     writeFileSync(filePATH,JSON.stringify(users, null, 2), "utf-8");
 
@@ -68,4 +78,55 @@ function listarUsersRepository(){
     return users;
 }
 
-export { armazenarUserRepository, listarUsersRepository }
+function hidrataRepository(userUpdate){//retransforma o objeto em instancia de classe para fazer alterações
+    const user = new User(userUpdate.cpf, userUpdate.nome, userUpdate.idade);
+
+    return user;
+}
+
+function atualizarUserRepository(userUpdate, newDado, option){
+    const users = listarUsersRepository(); //array js com objetos padroes sem vinculo com a classe USER
+    const index = users.findIndex(user => user.cpf === userUpdate.getCpf());
+
+    switch(option){
+        case 1:
+            users[index] = {
+                cpf: newDado,
+                nome: userUpdate.getNome(),
+                idade: userUpdate.getIdade()
+            }
+            break;
+        case 2:
+            users[index] = {
+                cpf: userUpdate.getCpf(),
+                nome: newDado,
+                idade: userUpdate.getIdade()
+            }
+            break;
+        case 3:
+            users[index] = {
+                cpf: userUpdate.getCpf(),
+                nome: userUpdate.getNome(),
+                idade: newDado,
+            }
+            break;
+        default:
+            console.log(chalk.red("Erro ao verificar a opção escolhida em userRepository()"));
+            return false;
+    }
+
+    writeFileSync(filePATH, JSON.stringify(users, null, 2), "utf-8");
+
+    return true;
+}
+
+function limparRepository(){
+    const users = [];
+
+    writeFileSync(filePATH,JSON.stringify(users, null, 2), "utf-8");
+
+    return users;
+
+}
+
+export { armazenarUserRepository, listarUsersRepository, hidrataRepository, atualizarUserRepository, limparRepository }
