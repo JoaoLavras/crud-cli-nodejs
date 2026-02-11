@@ -1,6 +1,8 @@
 import { input } from '@inquirer/prompts';
 import chalk from 'chalk';
-import { armazenarUserRepository, listarUsersRepository } from '../repositories/userRepository.js';
+import { armazenarUserRepository, listarUsersRepository, hidrataRepository, atualizarUserRepository, limparRepository } from '../repositories/userRepository.js';
+
+let count = 1;
 
 function validarCadastro(cpf, nome, idade){
     console.clear();
@@ -39,18 +41,91 @@ function buscarUserService(cpfKey){;
     const userSearch = listUsers.find(listUsers => listUsers.cpf === cpfKey);
 
     if(userSearch){
-        console.log(chalk.bold.green("User Encontrado!"));
-        console.log(chalk.yellow("NOME: ", userSearch.nome));
-        console.log(chalk.yellow("CPF: ", userSearch.cpf));
-        console.log(chalk.yellow("IDADE: ", userSearch.idade));
+        return userSearch;
     }
-    else{
-        console.log("usuario nao encontrado!");
+
+    return false;
+}
+
+async function atualizarUserService(cpfKey){
+
+    if(!buscarUserService(cpfKey)){ //buscar nao é assincrono entao funciona deboas
+        console.clear();
+        console.log(chalk.red(`[Error ${count}] Erro Usuario nao Encontrado!`)); //count apenas para estetica e entendimento
+        count++; 
         return false;
     }
 
-    return true;
+    restauraCount();
+
+    let userUpdate = buscarUserService(cpfKey);
+
+    if(!userUpdate){
+        console.log(chalk.red("Ocorreu um erro inesperado ao buscar o User na Base de Dados!"))
+        return false;
+    }
+
+    userUpdate = hidrataRepository(userUpdate);
+
+    console.log("ATUALIZAÇÃO DE DADOS");
+    console.log("----DADOS ATE A ULTIMA ATUALIZAÇÃO----");
+    console.log(chalk.yellow(userUpdate.getCpf()));
+    console.log(chalk.yellow(userUpdate.getNome()));
+    console.log(chalk.yellow(userUpdate.getIdade()));
+    console.log("-------------------------------------");
+    console.log("1 - CPF");
+    console.log("2 - NOME");
+    console.log("3 - IDADE");
+
+    const optionUpdateString = await input({message: "Digite a opção que deseja atualizar: "});
+    const optionUpdate = parseInt(optionUpdateString);
+
+    if(optionUpdate !== 1 && optionUpdate !== 2 && optionUpdate !== 3 ){
+        console.clear();
+        console.log(chalk.red(`[${count}] Erro: Digite uma opcao valida!`));
+        atualizarUserService(cpfKey);
+    }
+
+    restauraCount();
+
+    let newDado = undefined;
+
+    switch(optionUpdate){
+        case 1:
+            console.log(chalk.green("< ATUALIZAR CPF SELECIONADO >"))
+            newDado = await input({message: "Digite o novo CPF: "});
+            break;
+        case 2:
+            console.log(chalk.green("< ATUALIZAR NOME SELECIONADO >"))
+            newDado = await input({message: "Digite o novo NOME: "});
+            break;
+        case 3:
+            console.log(chalk.green("< ATUALIZAR CPF SELECIONADO >"))
+            newDado = await input({message: "Digite a nova IDADE: "});
+            break;
+        default:
+            console.clear()
+            console.log(chalk.red("\nErro Inesperado - option recebeu um numero fora das opções válidas!!"));
+            atualizarUserService(cpfKey);
+    }
+
+    if(newDado === undefined){
+        console.log(chalk.red("Error: NewDado continua Undefined mesmo apos a seleção de opções"));
+        return false;
+    }
+
+    return atualizarUserRepository(userUpdate, newDado, optionUpdate);
+
 }
 
-export { validarCadastro, listarUsersService, buscarUserService }
+function limparService(){
+    limparRepository();
+    console.log(chalk.bgMagenta("Limpeza Concluida!\n"));
+}
+
+function restauraCount(){
+    count = 1;
+}
+
+export { validarCadastro, listarUsersService, buscarUserService, atualizarUserService, limparService }
 
