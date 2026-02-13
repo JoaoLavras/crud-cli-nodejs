@@ -10,6 +10,14 @@ function menuBack(){
     return menu();
 }
 
+function limparTerminal(){
+    console.clear();
+}
+
+function linhaDivisoria(){
+    console.log(chalk.yellow("------------"));
+}
+
 async function cadastrarUserController(){ 
     
     console.log(message);
@@ -19,32 +27,47 @@ async function cadastrarUserController(){
 
     if(!validarCadastroService(cpf,nome,idade)){
         message = chalk.yellow("Preencha novamente os campos abaixo...");
-        cadastrarUserController();
+        return cadastrarUserController();
     }
 
+    linhaDivisoria();
+
+    return menuBack();
 }
 
 function listarUsersController(){
+    if(!listarUsersService()){
+        console.log(chalk.redBright("A Lista Está Vazia!"));
+
+        return menuBack();
+    }
+
     listarUsersService();
+
+    linhaDivisoria();
+
+    return menuBack();
 }
 
 async function buscarUserController(){
     const cpfKey = await input({message: "Digite o CPF que deseja buscar: "});
 
+    if(!buscarUserService(cpfKey)){
+        console.clear();
+        console.log(chalk.red("Erro Usuário nao encontrado no sistema!"));
+        return buscarUserController();
+    }
+    
     const userSearch = buscarUserService(cpfKey);
 
-    if(userSearch){
-        console.log(chalk.bold.green("User Encontrado!"));
-        console.log(chalk.yellow("NOME: ", userSearch.nome));
-        console.log(chalk.yellow("CPF: ", userSearch.cpf));
-        console.log(chalk.yellow("IDADE: ", userSearch.idade));
+    console.log(chalk.bold.green("User Encontrado!"));
+    console.log(chalk.yellow("NOME: ", userSearch.nome));
+    console.log(chalk.yellow("CPF: ", userSearch.cpf));
+    console.log(chalk.yellow("IDADE: ", userSearch.idade));
 
-        return true;
-    }
-
-    console.log(chalk.red("Erro Usuário nao encontrado!"));
-
-    return false;
+    linhaDivisoria();
+    
+    return menuBack();
 }
 
 async function atualizarUserController(){
@@ -75,4 +98,4 @@ function limparController(){
     limparService();
 }
 
-export { cadastrarUserController, listarUsersController, buscarUserController, atualizarUserController, deletarUserController, limparController }
+export { cadastrarUserController, listarUsersController, buscarUserController, atualizarUserController, deletarUserController, limparController, limparTerminal }
