@@ -1,23 +1,42 @@
 import { input } from '@inquirer/prompts';
 import chalk from 'chalk';
-import { armazenarUserRepository, listarUsersRepository, hidrataRepository, atualizarUserRepository, limparRepository } from '../repositories/userRepository.js';
+import { armazenarUserRepository, listarUsersRepository, hidrataRepository, atualizarUserRepository, limparRepository, deleterUserRepository } from '../repositories/userRepository.js';
+import { parse } from 'node:path';
 
 let count = 1;
 
-function validarCadastro(cpf, nome, idade){
+function validarCadastroService(cpf, nome, idade){
     console.clear();
-    
+
+    const idadeInt = parseInt(idade);
+
     //validar tamanho
     if(cpf.length !== 11){
-        console.log(cpf.length);
-        console.log("Cpf Invalido - Min 11 caracteres!");
-        return;
+        console.clear();
+        console.log(chalk.red("Cpf Invalido - Min 11 caracteres!"));
+
+        return false;
+
+    } else if(!(parseInt(cpf) == cpf)){
+        console.clear();
+        console.log(chalk.red("Cpf Invalido - Comportamento incomum - entrada de dados rejeitada pelo sistema"));
+
+        return false;
+
+    } else if(idadeInt === undefined || idadeInt > 116 || !Number.isInteger(idadeInt) || idadeInt < 0) {
+        console.clear();
+        console.log(chalk.redBright("Idade inválida - verique e tente novamente!"));
+
+        return false;
+
+    } else if(buscarUserService(cpf)){  //validar existencia no sistema
+        console.log(chalk.red("Esse CPF ja existe no sistema!"));
+
+        return false;
     }
 
-    //validar existencia no sistema
-
     //armazenar
-    armazenarUserRepository(cpf, nome, idade);
+    return armazenarUserRepository(cpf, nome, idadeInt);
 }
 
 function listarUsersService(){
@@ -118,6 +137,29 @@ async function atualizarUserService(cpfKey){
 
 }
 
+function deletarUserService(cpfKey){
+
+    if(!buscarUserService(cpfKey)){ //buscar nao é assincrono entao funciona deboas
+        console.clear();
+        console.log(chalk.red(`[Error ${count}] Erro Usuario nao Encontrado! -> deletarUserServiceError()`)); //count apenas para estetica e entendimento
+        count++; 
+        return false;
+    }
+
+    let userDelete = buscarUserService(cpfKey);
+    userDelete = hidrataRepository(userDelete);
+
+    if(!deleterUserRepository(userDelete)){
+        console.log(chalk.red("Erro ao deletar o Usuario"));
+        return false;
+    }
+
+    console.log(chalk.green("Usuario deletado com sucesso!"));
+
+    return true;
+
+};
+
 function limparService(){
     limparRepository();
     console.log(chalk.bgMagenta("Limpeza Concluida!\n"));
@@ -127,5 +169,5 @@ function restauraCount(){
     count = 1;
 }
 
-export { validarCadastro, listarUsersService, buscarUserService, atualizarUserService, limparService }
+export { validarCadastroService, listarUsersService, buscarUserService, atualizarUserService, limparService, deletarUserService }
 

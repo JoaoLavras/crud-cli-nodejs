@@ -1,16 +1,27 @@
 import { input } from '@inquirer/prompts';
 import chalk from 'chalk';
-import { validarCadastro, listarUsersService, buscarUserService, atualizarUserService, limparService } from "../services/userService.js";
+import { validarCadastroService, listarUsersService, buscarUserService, atualizarUserService, limparService, deletarUserService } from "../services/userService.js";
+import { menu } from "../cli/menu.js";
 
 //user { id: string, nome: string, idade }
+let message = chalk.whiteBright("Preencha os campos abaixo ...");
+
+function menuBack(){
+    return menu();
+}
 
 async function cadastrarUserController(){ 
-    console.log(chalk.whiteBright("Preencha os campos abaixo ..."));
+    
+    console.log(message);
     const cpf = await input({message: chalk.greenBright("CPF: ")});
     const nome = await input({message: chalk.greenBright("Nome: ")});
     const idade = await input({message: chalk.greenBright("Idade: ")});
 
-    validarCadastro(cpf, nome, idade);
+    if(!validarCadastroService(cpf,nome,idade)){
+        message = chalk.yellow("Preencha novamente os campos abaixo...");
+        cadastrarUserController();
+    }
+
 }
 
 function listarUsersController(){
@@ -49,9 +60,15 @@ async function atualizarUserController(){
 
 }
 
-function deletarUserController(){
-    console.log("userController chamando deletarUsers()");
-    console.log("Deletando users...");
+async function deletarUserController(){
+    const cpfKey = await input({message: "Digite o CPF do usuario que deseja deletar: "});
+    const resultado = deletarUserService(cpfKey);
+
+    if(!resultado){
+        return deletarUserController();
+    }
+
+    return true;
 }
 
 function limparController(){

@@ -11,7 +11,7 @@ async function menu(){
     console.log("5 - Deletar User");
     console.log("6 - limpar base de dados");
 
-    const optionString = await input({ message: chalk.bgYellowBright('Digite uma opção >> ') });
+    const optionString = await input({ message: chalk.yellow('Digite uma opção >> ') });
     const option = parseInt(optionString);
 
     switch(option){

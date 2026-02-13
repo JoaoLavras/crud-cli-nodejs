@@ -69,6 +69,8 @@ function armazenarUserRepository(cpf, nome, idade){
     console.log(chalk.yellowBright("CPF: ", cpf));
     console.log(chalk.yellowBright("Nome: ", nome));
     console.log(chalk.yellowBright("Idade: ", idade));
+
+    return true;
 }
 
 function listarUsersRepository(){
@@ -120,6 +122,17 @@ function atualizarUserRepository(userUpdate, newDado, option){
     return true;
 }
 
+function deleterUserRepository(userDelete){
+    const users = listarUsersRepository();
+    const index = users.findIndex(user => user.cpf === userDelete.getCpf());
+
+    users.splice(index,1);
+
+    writeFileSync(filePATH, JSON.stringify(users, null, 2), "utf-8");
+
+    return true;
+}
+
 function limparRepository(){
     const users = [];
 
@@ -129,4 +142,4 @@ function limparRepository(){
 
 }
 
-export { armazenarUserRepository, listarUsersRepository, hidrataRepository, atualizarUserRepository, limparRepository }
+export { armazenarUserRepository, listarUsersRepository, hidrataRepository, atualizarUserRepository, limparRepository, deleterUserRepository }
