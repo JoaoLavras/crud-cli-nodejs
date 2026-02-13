@@ -29,3 +29,11 @@ console.log("users.cpf ->", users.cpf);
 
 writeFileSync(filePATH, JSON.stringify(users, null, 2), "utf-8");
 
+const NumeroFloat = 2.5;
+console.log(NumeroFloat);
+const NumeroInteiro = parseInt(NumeroFloat);
+console.log(typeof NumeroFloat);
+console.log(typeof NumeroInteiro);
+const texto = "JoaoDev";
+const textoInteiro = parseInt(texto);
+console.log(textoInteiro)
