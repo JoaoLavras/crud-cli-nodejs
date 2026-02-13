@@ -1,6 +1,6 @@
 import { input } from '@inquirer/prompts';
 import chalk from 'chalk';
-import { cadastrarUserController, listarUsersController, buscarUserController, atualizarUserController, deletarUserController, limparController } from '../controllers/userController.js';
+import { cadastrarUserController, listarUsersController, buscarUserController, atualizarUserController, deletarUserController, limparController, limparTerminal } from '../controllers/userController.js';
 
 async function menu(){
     console.log(chalk.bold.cyan("CLI - GERENCIAMENTO DE USERS"));
@@ -10,6 +10,7 @@ async function menu(){
     console.log("4 - Atualizar User");
     console.log("5 - Deletar User");
     console.log("6 - limpar base de dados");
+    console.log("7 - limpar terminal");
 
     const optionString = await input({ message: chalk.yellow('Digite uma opção >> ') });
     const option = parseInt(optionString);
@@ -40,6 +41,10 @@ async function menu(){
             limparController();
             menu();
             break
+        case 7:
+            limparTerminal();
+            menu();
+            break;
         default:
             console.clear();
             console.log(chalk.red("Opção inválida! Tente Novamente...\n"));

@@ -5,25 +5,28 @@ import { parse } from 'node:path';
 
 let count = 1;
 
+
+
 function validarCadastroService(cpf, nome, idade){
     console.clear();
 
     const idadeInt = parseInt(idade);
 
-    //validar tamanho
+    //validar tamanho -> validaTamanhoCpf(cpf)
     if(cpf.length !== 11){
         console.clear();
         console.log(chalk.red("Cpf Invalido - Min 11 caracteres!"));
 
         return false;
 
-    } else if(!(parseInt(cpf) == cpf)){
+    } else if(!(parseInt(cpf) == cpf)){// validaTipagem(cpf)
         console.clear();
         console.log(chalk.red("Cpf Invalido - Comportamento incomum - entrada de dados rejeitada pelo sistema"));
 
         return false;
 
     } else if(idadeInt === undefined || idadeInt > 116 || !Number.isInteger(idadeInt) || idadeInt < 0) {
+        //validaIdade(idadeInt)
         console.clear();
         console.log(chalk.redBright("Idade inválida - verique e tente novamente!"));
 
@@ -43,6 +46,10 @@ function listarUsersService(){
     console.clear();
 
     const userList = listarUsersRepository();
+
+    if(userList.length === 0){
+        return false;
+    }
 
     console.log(chalk.bold.redBright("LISTA DE USUARIOS"))
     for(let i = 0; i < userList.length; i++){
@@ -86,17 +93,17 @@ async function atualizarUserService(cpfKey){
 
     userUpdate = hidrataRepository(userUpdate);
 
-    console.log("ATUALIZAÇÃO DE DADOS");
-    console.log("----DADOS ATE A ULTIMA ATUALIZAÇÃO----");
-    console.log(chalk.yellow(userUpdate.getCpf()));
-    console.log(chalk.yellow(userUpdate.getNome()));
-    console.log(chalk.yellow(userUpdate.getIdade()));
-    console.log("-------------------------------------");
-    console.log("1 - CPF");
-    console.log("2 - NOME");
-    console.log("3 - IDADE");
+    console.log(chalk.bgYellowBright.black("--------{ATUALIZAÇÃO DE DADOS}--------"));
+    console.log(chalk.bold.yellowBright("----DADOS ATE A ULTIMA ATUALIZAÇÃO----"));
+    console.log(chalk.yellow("CPF - ",userUpdate.getCpf()));
+    console.log(chalk.yellow("NOME - ",userUpdate.getNome()));
+    console.log(chalk.yellow("IDADE - ",userUpdate.getIdade()));
+    console.log(chalk.bold.yellowBright("-------------------------------------"));
+    console.log(chalk.bold("1 - CPF"));
+    console.log(chalk.bold("2 - NOME"));
+    console.log(chalk.bold("3 - IDADE"));
 
-    const optionUpdateString = await input({message: "Digite a opção que deseja atualizar: "});
+    const optionUpdateString = await input({message: chalk.yellow("Digite a opção que deseja atualizar: ")});
     const optionUpdate = parseInt(optionUpdateString);
 
     if(optionUpdate !== 1 && optionUpdate !== 2 && optionUpdate !== 3 ){
@@ -111,15 +118,15 @@ async function atualizarUserService(cpfKey){
 
     switch(optionUpdate){
         case 1:
-            console.log(chalk.green("< ATUALIZAR CPF SELECIONADO >"))
+            console.log(chalk.bold.green("< ATUALIZAR CPF SELECIONADO >"))
             newDado = await input({message: "Digite o novo CPF: "});
             break;
         case 2:
-            console.log(chalk.green("< ATUALIZAR NOME SELECIONADO >"))
+            console.log(chalk.bold.green("< ATUALIZAR NOME SELECIONADO >"))
             newDado = await input({message: "Digite o novo NOME: "});
             break;
         case 3:
-            console.log(chalk.green("< ATUALIZAR CPF SELECIONADO >"))
+            console.log(chalk.bold.green("< ATUALIZAR IDADE SELECIONADO >"))
             newDado = await input({message: "Digite a nova IDADE: "});
             break;
         default:
