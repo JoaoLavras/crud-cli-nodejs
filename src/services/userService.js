@@ -1,40 +1,24 @@
 import { input } from '@inquirer/prompts';
 import chalk from 'chalk';
 import { armazenarUserRepository, listarUsersRepository, hidrataRepository, atualizarUserRepository, limparRepository, deleterUserRepository } from '../repositories/userRepository.js';
+import { validaTamanhoCpf, validaTipagemCpf, validaIdade, validaExistencia } from '../utils/validation.js'
 import { parse } from 'node:path';
+import { limparTerminal } from '../controllers/userController.js';
 
 let count = 1;
-
-
 
 function validarCadastroService(cpf, nome, idade){
     console.clear();
 
     const idadeInt = parseInt(idade);
 
-    //validar tamanho -> validaTamanhoCpf(cpf)
-    if(cpf.length !== 11){
-        console.clear();
-        console.log(chalk.red("Cpf Invalido - Min 11 caracteres!"));
-
+    if(!validaTamanhoCpf(cpf)){
         return false;
-
-    } else if(!(parseInt(cpf) == cpf)){// validaTipagem(cpf)
-        console.clear();
-        console.log(chalk.red("Cpf Invalido - Comportamento incomum - entrada de dados rejeitada pelo sistema"));
-
+    } else if(!validaTipagemCpf(cpf)){
         return false;
-
-    } else if(idadeInt === undefined || idadeInt > 116 || !Number.isInteger(idadeInt) || idadeInt < 0) {
-        //validaIdade(idadeInt)
-        console.clear();
-        console.log(chalk.redBright("Idade inválida - verique e tente novamente!"));
-
+    } else if(!validaIdade(idade)){
         return false;
-
-    } else if(buscarUserService(cpf)){  //validar existencia no sistema
-        console.log(chalk.red("Esse CPF ja existe no sistema!"));
-
+    } else if(!validaExistencia(cpf)){
         return false;
     }
 
@@ -91,8 +75,9 @@ async function atualizarUserService(cpfKey){
         return false;
     }
 
-    userUpdate = hidrataRepository(userUpdate);
+    userUpdate = hidrataRepository(userUpdate); //transforma o userUpdate em uma instancia da classe User
 
+    
     console.log(chalk.bgYellowBright.black("--------{ATUALIZAÇÃO DE DADOS}--------"));
     console.log(chalk.bold.yellowBright("----DADOS ATE A ULTIMA ATUALIZAÇÃO----"));
     console.log(chalk.yellow("CPF - ",userUpdate.getCpf()));
@@ -109,7 +94,8 @@ async function atualizarUserService(cpfKey){
     if(optionUpdate !== 1 && optionUpdate !== 2 && optionUpdate !== 3 ){
         console.clear();
         console.log(chalk.red(`[${count}] Erro: Digite uma opcao valida!`));
-        atualizarUserService(cpfKey);
+        count++;
+        return atualizarUserService(cpfKey);
     }
 
     restauraCount();
@@ -120,19 +106,38 @@ async function atualizarUserService(cpfKey){
         case 1:
             console.log(chalk.bold.green("< ATUALIZAR CPF SELECIONADO >"))
             newDado = await input({message: "Digite o novo CPF: "});
+            //reutilizar funções de validação
+
+            if(!validaTamanhoCpf(newDado)){
+                return atualizarUserService(cpfKey);
+
+            } else if(!validaTipagemCpf(newDado)){
+                return atualizarUserService(cpfKey);
+
+            } else if(!validaExistencia(newDado)){
+                return atualizarUserService(cpfKey);
+            }
+
             break;
         case 2:
             console.log(chalk.bold.green("< ATUALIZAR NOME SELECIONADO >"))
             newDado = await input({message: "Digite o novo NOME: "});
+
             break;
         case 3:
             console.log(chalk.bold.green("< ATUALIZAR IDADE SELECIONADO >"))
             newDado = await input({message: "Digite a nova IDADE: "});
+
+            if(!validaIdade(newDado)){
+                return atualizarUserService(cpfKey);
+            }
+
             break;
+
         default:
             console.clear()
-            console.log(chalk.red("\nErro Inesperado - option recebeu um numero fora das opções válidas!!"));
-            atualizarUserService(cpfKey);
+            console.log(chalk.red("\nErro Inesperado - option recebeu um numero fora das opções válidas!! Por favor siga as instruções do"));
+            return atualizarUserService(cpfKey);
     }
 
     if(newDado === undefined){
@@ -167,6 +172,10 @@ function deletarUserService(cpfKey){
 
 };
 
+function isVazio(){
+    return listarUsersRepository();
+}
+
 function limparService(){
     limparRepository();
     console.log(chalk.bgMagenta("Limpeza Concluida!\n"));
@@ -176,5 +185,5 @@ function restauraCount(){
     count = 1;
 }
 
-export { validarCadastroService, listarUsersService, buscarUserService, atualizarUserService, limparService, deletarUserService }
+export { validarCadastroService, listarUsersService, buscarUserService, atualizarUserService, limparService, deletarUserService, isVazio }
 
