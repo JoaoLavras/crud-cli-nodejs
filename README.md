@@ -2,6 +2,9 @@
 
 Uma aplicação **CLI (Command Line Interface)** simples para gerenciamento de usuários via terminal.
 
+<img width="346" height="199" alt="image" src="https://github.com/user-attachments/assets/69ab67ff-66c0-494d-9e65-566d6f347c03" />
+
+
 O sistema permite:
 
 - ✅ Criar usuários  
