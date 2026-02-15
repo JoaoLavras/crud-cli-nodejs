@@ -71,7 +71,6 @@ node index.js
  ├── database
 📄 index.js
 📄 package.json
-📄 .env
 ```
 
 Arquitetura baseada em separação por camadas:
