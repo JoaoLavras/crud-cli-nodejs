@@ -1,6 +1,6 @@
 import { input } from '@inquirer/prompts';
 import chalk from 'chalk';
-import { validarCadastroService, listarUsersService, buscarUserService, atualizarUserService, limparService, deletarUserService } from "../services/userService.js";
+import { validarCadastroService, listarUsersService, buscarUserService, atualizarUserService, limparService, deletarUserService, isVazio } from "../services/userService.js";
 import { menu } from "../cli/menu.js";
 
 //user { id: string, nome: string, idade }
@@ -75,23 +75,31 @@ async function atualizarUserController(){
     const resultado = await atualizarUserService(cpfKey); //por a função ser async é necessario esssa sintaxe
 
     if(!resultado){ 
-        atualizarUserController();
+        return atualizarUserController();
     }
-    else{
-        console.log("Usuario atualizado com sucesso!");
-    }
+    
+    console.log(chalk.bgGreen.white("Usuario atualizado com sucesso!"));
 
+    return menuBack();
 }
 
 async function deletarUserController(){
+
+    const lista = isVazio();
+
+    if(lista.length === 0){
+        console.log(chalk.redBright("A Lista Está Vazia! -> Não há o que deletar!"));
+        return menuBack();
+    }
+
     const cpfKey = await input({message: "Digite o CPF do usuario que deseja deletar: "});
-    const resultado = deletarUserService(cpfKey);
+    const resultado = deletarUserService(cpfKey); 
 
     if(!resultado){
         return deletarUserController();
     }
 
-    return true;
+    return menuBack();
 }
 
 function limparController(){
